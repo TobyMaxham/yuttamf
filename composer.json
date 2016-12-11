@@ -6,7 +6,9 @@
     "illuminate/database": "^5.3",
     "vlucas/phpdotenv": "^2.4"
   },
-  "psr-4": {
-    "Yutta\\": "src/"
+  "autoload": {
+    "psr-4": {
+      "Yutta\\": "src/"
+    }
   }
 }
