@@ -47,7 +47,7 @@ class Application
 
     public function view($path, array $attributes = [])
     {
-        return $this->twigLoader->render($path, $attributes);
+        return $this->twig->render($path, $attributes);
     }
 
     public function start()
