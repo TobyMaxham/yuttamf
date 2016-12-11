@@ -4,7 +4,8 @@
   "type": "project",
   "require": {
     "illuminate/database": "^5.3",
-    "vlucas/phpdotenv": "^2.4"
+    "vlucas/phpdotenv": "^2.4",
+    "symfony/http-foundation": "^3.2"
   },
   "autoload": {
     "psr-4": {
