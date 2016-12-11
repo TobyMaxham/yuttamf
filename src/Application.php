@@ -13,9 +13,13 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 class Application
 {
 
+    public $capsule;
     protected $baseDirInfo;
 
-    public $capsule;
+    /**
+     * @var Twig_Environment $twigLoader
+     */
+    private $twig;
 
     public function __construct($baseDir)
     {
@@ -41,12 +45,18 @@ class Application
         return isset($this->baseDirInfo['dirname']) ? $this->baseDirInfo['dirname'] : '';
     }
 
+    public function view($path, array $attributes = [])
+    {
+        return $this->twigLoader->render($path, $attributes);
+    }
+
     public function start()
     {
         $dotenv = new Dotenv($this->basedir());
         $dotenv->load();
 
         $this->startDB();
+        $this->templateEngine();
     }
 
     private function startDB()
@@ -55,18 +65,26 @@ class Application
         $this->capsule = new Capsule;
 
         $this->capsule->addConnection([
-            'driver'    => getenv('DB_CONNECTION'),
-            'host'      => getenv('DB_HOST'),
-            'database'  => getenv('DB_DATABASE'),
-            'username'  => getenv('DB_USERNAME'),
-            'password'  => getenv('DB_PASSWORD'),
-            'charset'   => 'utf8',
+            'driver' => getenv('DB_CONNECTION'),
+            'host' => getenv('DB_HOST'),
+            'database' => getenv('DB_DATABASE'),
+            'username' => getenv('DB_USERNAME'),
+            'password' => getenv('DB_PASSWORD'),
+            'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
+            'prefix' => '',
         ]);
 
         //$this->capsule->setAsGlobal();
         $this->capsule->bootEloquent();
+    }
+
+    private function templateEngine()
+    {
+        $loader = new Twig_Loader_Filesystem($this->basedir() . '/views');
+        $this->twig = new Twig_Environment($loader, array(
+            'cache' => $this->basedir() . '/storage/views',
+        ));
     }
 
 }
