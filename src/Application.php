@@ -17,7 +17,7 @@ class Application
     protected $baseDirInfo;
 
     /**
-     * @var Twig_Environment $twigLoader
+     * @var \Twig_Environment $twigLoader
      */
     private $twig;
 
@@ -81,8 +81,8 @@ class Application
 
     private function templateEngine()
     {
-        $loader = new Twig_Loader_Filesystem($this->basedir() . '/views');
-        $this->twig = new Twig_Environment($loader, array(
+        $loader = new \Twig_Loader_Filesystem($this->basedir() . '/views');
+        $this->twig = new \Twig_Environment($loader, array(
             'cache' => $this->basedir() . '/storage/views',
         ));
     }
