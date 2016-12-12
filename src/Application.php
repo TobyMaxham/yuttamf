@@ -3,6 +3,7 @@
 namespace Yutta;
 
 use Dotenv\Dotenv;
+use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
@@ -10,16 +11,10 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  * @package Yutta
  * @author Tobias Maxham <git2016@maxham.de>
  */
-class Application
+class Application extends Container
 {
 
-    public $capsule;
     protected $baseDirInfo;
-
-    /**
-     * @var \Twig_Environment $twigLoader
-     */
-    private $twig;
 
     public function __construct($baseDir)
     {
@@ -47,7 +42,7 @@ class Application
 
     public function view($path, array $attributes = [])
     {
-        return $this->twig->render($path, $attributes);
+        return $this['template']->render($path, $attributes);
     }
 
     public function start()
@@ -56,35 +51,32 @@ class Application
         $dotenv->load();
 
         $this->startDB();
-        $this->templateEngine();
+        $this->startTemplateEngine();
     }
 
     private function startDB()
     {
-
-        $this->capsule = new Capsule;
-
-        $this->capsule->addConnection([
-            'driver' => getenv('DB_CONNECTION'),
-            'host' => getenv('DB_HOST'),
-            'database' => getenv('DB_DATABASE'),
-            'username' => getenv('DB_USERNAME'),
-            'password' => getenv('DB_PASSWORD'),
+        $this['db'] = new Capsule;
+        $this['db']->addConnection([
+            'driver' => env('DB_CONNECTION'),
+            'host' => env('DB_HOST'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
+            'prefix' => env('DB_PREFIX', ''),
         ]);
 
-        //$this->capsule->setAsGlobal();
-        $this->capsule->bootEloquent();
+        $this['db']->bootEloquent();
     }
 
-    private function templateEngine()
+    private function startTemplateEngine()
     {
         $loader = new \Twig_Loader_Filesystem($this->basedir() . '/views');
-        $this->twig = new \Twig_Environment($loader, array(
-            'cache' => $this->basedir() . '/storage/views',
-        ));
+        $this['template'] = new \Twig_Environment($loader, [
+            'cache' => env('APP_ENV') == 'prod' ? $this->basedir() . '/storage/views' : false,
+        ]);
     }
 
 }
