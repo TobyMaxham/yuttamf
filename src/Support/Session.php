@@ -41,6 +41,16 @@ class Session
         return $value;
     }
 
+    public function start()
+    {
+        if ($name = env('SESSION_NAME', false)) {
+            session_name($name);
+        }
+
+        session_start();
+        return $this->init();
+    }
+
     /**
      * @return bool
      * @throws SessionDisabledException
@@ -79,6 +89,7 @@ class Session
         if ($name = env('SESSION_NAME', false)) {
             session_name($name);
         }
+
         return session_start();
     }
 

@@ -3,8 +3,17 @@
 /**
  * @return \Yutta\Application $app
  */
-function app() {
+function app()
+{
     return \Yutta\Application::getInstance();
+}
+
+/**
+ * @return \Yutta\Support\Router
+ */
+function route()
+{
+    return app()->route();
 }
 
 if (!function_exists('env')) {

@@ -5,6 +5,9 @@ namespace Yutta;
 use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Symfony\Component\HttpFoundation\Request;
+use Yutta\Support\Router;
+use Yutta\Support\Session;
 
 /**
  * Class Application
@@ -27,6 +30,12 @@ class Application extends Container
             $baseDir = $this->resolvePath();
         }
         $this->baseDirInfo = pathinfo($baseDir);
+        $this['request'] = Request::createFromGlobals();
+        $this['router'] = new Router();
+
+
+        $this->session = new Session();
+        $this->session->start();
     }
 
     private function resolvePath()
@@ -47,11 +56,6 @@ class Application extends Container
         }
 
         return static::$instance;
-    }
-
-    public function isRequest()
-    {
-
     }
 
     public function start()
@@ -91,6 +95,22 @@ class Application extends Container
         $this['template'] = new \Twig_Environment($loader, [
             'cache' => env('APP_ENV') == 'prod' ? $this->basedir() . '/storage/views' : false,
         ]);
+    }
+
+    /**
+     * @return Router
+     */
+    public function route()
+    {
+        return $this->router;
+    }
+
+    public function isRequest($path, $method = 'GET')
+    {
+        if ($path == '') {
+            $path = '/';
+        }
+        return $path == $this->request->getPathInfo() && strtoupper($method) == $this->request->getMethod();
     }
 
     public function publicPath($path = '')
