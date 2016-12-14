@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @return \Yutta\Application $app
+ */
+function app() {
+    return \Yutta\Application::getInstance();
+}
+
 if (!function_exists('env')) {
 
     /**

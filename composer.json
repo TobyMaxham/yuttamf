@@ -11,6 +11,9 @@
   "autoload": {
     "psr-4": {
       "Yutta\\": "src/"
-    }
+    },
+    "files": [
+      "src/Support/helpers.php"
+    ]
   }
 }

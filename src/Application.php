@@ -16,33 +16,42 @@ class Application extends Container
 
     protected $baseDirInfo;
 
-    public function __construct($baseDir)
+    protected $packageName = 'tobymaxham/yuttamf';
+
+    public function __construct($baseDir = false)
     {
+        static::setInstance($this);
+        $this->instance('app', $this);
+
+        if (!$baseDir) {
+            $baseDir = $this->resolvePath();
+        }
         $this->baseDirInfo = pathinfo($baseDir);
     }
 
-    public function publicPath($path = '')
+    private function resolvePath()
     {
-        $aPath = $this->basedir() . DIRECTORY_SEPARATOR . 'public';
-
-        if (trim($path) == '') {
-            return $aPath;
+        // check if installed in vendor
+        $path = 'vendor' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $this->packageName);
+        if (strpos(__DIR__, $path) !== false) {
+            return str_replace('/', DIRECTORY_SEPARATOR, __DIR__ . '../../../../../../');
         }
-
-        if (substr($path, 0, 1) == '/' || substr($path, 0, 1) == DIRECTORY_SEPARATOR) {
-            return $aPath . $path;
-        }
-        return $aPath . DIRECTORY_SEPARATOR . $path;
+        return __DIR__;
     }
 
-    public function basedir()
+    public static function getInstance()
     {
-        return isset($this->baseDirInfo['dirname']) ? $this->baseDirInfo['dirname'] : '';
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
+            static::$instance->start();
+        }
+
+        return static::$instance;
     }
 
-    public function view($path, array $attributes = [])
+    public function isRequest()
     {
-        return $this['template']->render($path, $attributes);
+
     }
 
     public function start()
@@ -52,6 +61,11 @@ class Application extends Container
 
         $this->startDB();
         $this->startTemplateEngine();
+    }
+
+    public function basedir()
+    {
+        return isset($this->baseDirInfo['dirname']) ? $this->baseDirInfo['dirname'] : '';
     }
 
     private function startDB()
@@ -77,6 +91,25 @@ class Application extends Container
         $this['template'] = new \Twig_Environment($loader, [
             'cache' => env('APP_ENV') == 'prod' ? $this->basedir() . '/storage/views' : false,
         ]);
+    }
+
+    public function publicPath($path = '')
+    {
+        $aPath = $this->basedir() . DIRECTORY_SEPARATOR . 'public';
+
+        if (trim($path) == '') {
+            return $aPath;
+        }
+
+        if (substr($path, 0, 1) == '/' || substr($path, 0, 1) == DIRECTORY_SEPARATOR) {
+            return $aPath . $path;
+        }
+        return $aPath . DIRECTORY_SEPARATOR . $path;
+    }
+
+    public function view($path, array $attributes = [])
+    {
+        return $this['template']->render($path, $attributes);
     }
 
 }
