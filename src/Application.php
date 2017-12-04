@@ -19,6 +19,8 @@ class Application extends Container
 
     protected $baseDirInfo;
 
+    protected $appStartet = false;
+
     protected $packageName = 'tobymaxham/yuttamf';
 
     public function __construct($baseDir = false)
@@ -54,8 +56,19 @@ class Application extends Container
             static::$instance = new static;
             static::$instance->start();
         }
+        if (!self::$instance->started()) {
+            static::$instance->start();
+        }
 
         return static::$instance;
+    }
+
+    /**
+     * @return bool
+     */
+    public function started()
+    {
+        return $this->appStartet;
     }
 
     public function start()
@@ -65,6 +78,7 @@ class Application extends Container
 
         $this->startDB();
         $this->startTemplateEngine();
+        $this->appStartet = true;
     }
 
     public function basedir()
@@ -131,5 +145,4 @@ class Application extends Container
     {
         return $this['template']->render($path, $attributes);
     }
-
 }
