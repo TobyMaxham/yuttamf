@@ -3,3 +3,4 @@
 .env
 composer.lock
 vendor
+.php_cs.cache

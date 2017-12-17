@@ -12,11 +12,10 @@ use Yutta\Support\Session;
 /**
  * Class Application
  * @package Yutta
- * @author Tobias Maxham <git2016@maxham.de>
+ * @author Tobias Maxham <git2017@maxham.de>
  */
 class Application extends Container
 {
-
     protected $baseDirInfo;
 
     protected $appStartet = false;
@@ -90,11 +89,12 @@ class Application extends Container
     {
         $this['db'] = new Capsule;
         $this['db']->addConnection([
-            'driver' => env('DB_CONNECTION'),
-            'host' => env('DB_HOST'),
-            'database' => env('DB_DATABASE'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
+            'driver' => env('DB_CONNECTION', 'mysql'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'yuttamf'),
+            'username' => env('DB_USERNAME', 'yuttamf'),
+            'password' => env('DB_PASSWORD', 'secret'),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => env('DB_PREFIX', ''),
