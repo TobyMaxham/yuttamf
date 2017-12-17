@@ -81,6 +81,22 @@ class Application extends Container
         $this->appStartet = true;
     }
 
+    /**
+     * @return Request
+     */
+    public function request()
+    {
+        return $this->request;
+    }
+
+    public function fulfill()
+    {
+        $response = $this->route()->invoke();
+        if (is_string($response)) {
+            echo $response;
+        }
+    }
+
     public function basedir()
     {
         return isset($this->baseDirInfo['dirname']) ? $this->baseDirInfo['dirname'] : '';
