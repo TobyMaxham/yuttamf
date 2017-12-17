@@ -1,13 +1,13 @@
 <?php
 
-namespace Yutta\Support;
+namespace Yutta\Session;
 
 /**
- * Class Session
- * @package Yutta\Support
+ * Class SessionHandler
+ * @package Yutta\Session
  * @author Tobias Maxham <git2016@maxham.de>
  */
-class Session
+class SessionHandler
 {
 
     /**
@@ -81,9 +81,12 @@ class Session
         }
 
         $params = session_get_cookie_params();
-        session_set_cookie_params($params['lifetime'],
-            $params['path'], $params['domain'],
-            $secure, $httponly
+        session_set_cookie_params(
+            $params['lifetime'],
+            $params['path'],
+            $params['domain'],
+            $secure,
+            $httponly
         );
 
         if ($name = env('SESSION_NAME', false)) {
@@ -111,9 +114,14 @@ class Session
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 65000,
-                $params['path'], $params['domain'],
-                $params['secure'], $params['httponly']
+            setcookie(
+                session_name(),
+                '',
+                time() - 65000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
             );
         }
         session_destroy();
@@ -149,32 +157,4 @@ class Session
         }
         return $default;
     }
-}
-
-class SessionHandlerException extends \Exception
-{
-}
-
-class SessionDisabledException extends SessionHandlerException
-{
-}
-
-class InvalidArgumentTypeException extends SessionHandlerException
-{
-}
-
-class ExpiredSessionException extends SessionHandlerException
-{
-}
-
-class SessionUseOnlyCookiesException extends SessionHandlerException
-{
-}
-
-class SessionHttpOnlyCookieException extends SessionHandlerException
-{
-}
-
-class SessionCookieSecureException extends SessionHandlerException
-{
 }

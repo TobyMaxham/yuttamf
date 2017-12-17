@@ -6,13 +6,15 @@ use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Symfony\Component\HttpFoundation\Request;
+use Yutta\Session\SessionHandler;
 use Yutta\Support\Router;
-use Yutta\Support\Session;
 
 /**
  * Class Application
  * @package Yutta
  * @author Tobias Maxham <git2017@maxham.de>
+ *
+ * @property SessionHandler $session
  */
 class Application extends Container
 {
@@ -34,8 +36,7 @@ class Application extends Container
         $this['request'] = Request::createFromGlobals();
         $this['router'] = new Router();
 
-
-        $this->session = new Session();
+        $this->session = new SessionHandler();
         $this->session->start();
     }
 
