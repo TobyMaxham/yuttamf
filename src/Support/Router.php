@@ -28,7 +28,25 @@ class Router
             return $this;
         }
         $this->routes[$method][$path] = $action;
+
+
+
         return $this;
+    }
+
+    private function checkSplitted($path, $method)
+    {
+        if (!isset($this->routes[$method])) {
+            return false;
+        }
+
+
+        $splitted = explode('/', $path);
+
+        echo '<pre>';
+        dd($splitted, $this->routes);
+
+        return '';
     }
 
     /**
@@ -41,10 +59,12 @@ class Router
         $method = app()['request']->getMethod();
 
         if (!isset($this->routes[$method][$path])) {
-            throw new \Exception('not a route');
+            if (!($route = $this->checkSplitted($path, $method))) {
+                throw new \Exception('not a route');
+            }
+        } else {
+            $route = $this->routes[$method][$path];
         }
-
-        $route = $this->routes[$method][$path];
 
         if (is_callable($route)) {
             return $route->__invoke();
