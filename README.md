@@ -17,7 +17,6 @@ The best way to install Yutta MF is to use the [Composer](https://getcomposer.or
 $ composer require tobymaxham/yuttamf "dev-master"
 ```
 
-At the current revision you have to set your `minimum-stability` to `dev`.
 With this command Yutta and all required dependencies will be installed.
 For a list of all dependencies please scroll down.
 

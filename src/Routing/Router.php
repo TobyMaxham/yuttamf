@@ -1,24 +1,17 @@
 <?php
 
-namespace Yutta\Support;
-
-use Symfony\Component\Routing\CompiledRoute;
-use Symfony\Component\Routing\Route as SymfonyRoute;
+namespace Yutta\Routing;
+use Yutta\Support\Controller;
 
 /**
  * Class Router
- * @package Yutta\Support
+ * @package Yutta\Routing
  * @author Tobias Maxham <git2016@maxham.de>
  */
 class Router
 {
 
     public $routes = [];
-
-    /**
-     * @var CompiledRoute
-     */
-    protected $compiled;
 
     public function get($path, $action)
     {
@@ -35,9 +28,7 @@ class Router
         if (isset($this->routes[$method][$path])) {
             return $this;
         }
-        $this->routes[$method][$path] = $action;
-
-        $this->compiled = with(new SymfonyRoute($path))->compile();
+        $this->routes[$method][$path] = with(new Route($action, $method, $path));
 
         return $this;
     }
@@ -48,8 +39,9 @@ class Router
             return false;
         }
 
+        /** @var Route $route **/
         foreach ($this->routes[$method] as $uri => $route) {
-            if (preg_match($this->compiled->getRegex(), $uri)) {
+            if (preg_match($route->getCompiled()->getRegex(), $uri)) {
                 return $route;
             }
         }
@@ -73,20 +65,29 @@ class Router
             $route = $this->routes[$method][$path];
         }
 
-        if (is_callable($route)) {
-            return $route->__invoke();
+        $routeAction = $route->getAction();
+
+        if (is_callable($routeAction)) {
+            return $routeAction->__invoke();
         }
 
-        if (is_string($route)) {
-            return $this->callControllerAction($route, $method);
+        if (is_string($routeAction)) {
+            return $this->callControllerAction($route);
         }
 
         throw new \Exception('not a program');
     }
 
-    private function callControllerAction($route, $_method)
+    /**
+     * @param Route $route
+     * @return mixed
+     * @throws \Exception
+     */
+    private function callControllerAction($route)
     {
-        $route = explode('@', $route);
+        $routeAction = $route->getAction();
+
+        $route = explode('@', $routeAction);
         $ctr = $route[0];
 
         if (count($route) == 1) {

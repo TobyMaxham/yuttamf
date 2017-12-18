@@ -7,7 +7,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Symfony\Component\HttpFoundation\Request;
 use Yutta\Session\SessionHandler;
-use Yutta\Support\Router;
+use Yutta\Routing\Router;
 
 /**
  * Class Application
