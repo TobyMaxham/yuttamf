@@ -2,6 +2,9 @@
 
 namespace Yutta\Support;
 
+use Symfony\Component\Routing\CompiledRoute;
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 /**
  * Class Router
  * @package Yutta\Support
@@ -11,6 +14,11 @@ class Router
 {
 
     public $routes = [];
+
+    /**
+     * @var CompiledRoute
+     */
+    protected $compiled;
 
     public function get($path, $action)
     {
@@ -29,24 +37,23 @@ class Router
         }
         $this->routes[$method][$path] = $action;
 
-
+        $this->compiled = with(new SymfonyRoute($path))->compile();
 
         return $this;
     }
 
-    private function checkSplitted($path, $method)
+    private function checkMatches($method)
     {
         if (!isset($this->routes[$method])) {
             return false;
         }
 
-
-        $splitted = explode('/', $path);
-
-        echo '<pre>';
-        dd($splitted, $this->routes);
-
-        return '';
+        foreach ($this->routes[$method] as $uri => $route) {
+            if (preg_match($this->compiled->getRegex(), $uri)) {
+                return $route;
+            }
+        }
+        return false;
     }
 
     /**
@@ -59,7 +66,7 @@ class Router
         $method = app()['request']->getMethod();
 
         if (!isset($this->routes[$method][$path])) {
-            if (!($route = $this->checkSplitted($path, $method))) {
+            if (!($route = $this->checkMatches($method))) {
                 throw new \Exception('not a route');
             }
         } else {
