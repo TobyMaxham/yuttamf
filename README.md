@@ -14,7 +14,7 @@ The Yutta MF PHP Framework is a simple framework that halps you to write simple 
 The best way to install Yutta MF is to use the [Composer](https://getcomposer.org/) package manager.
 
 ```sh
-$ composer require tobymaxham/yuttamf "dev-master"
+$ composer require tobymaxham/yuttamf
 ```
 
 With this command Yutta and all required dependencies will be installed.

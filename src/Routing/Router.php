@@ -79,13 +79,13 @@ class Router
     }
 
     /**
-     * @param Route $route
+     * @param Route $_route
      * @return mixed
      * @throws \Exception
      */
-    private function callControllerAction($route)
+    private function callControllerAction($_route)
     {
-        $routeAction = $route->getAction();
+        $routeAction = $_route->getAction();
 
         $route = explode('@', $routeAction);
         $ctr = $route[0];
@@ -109,7 +109,7 @@ class Router
             throw new \Exception('Invalid method ' . $method);
         }
 
-        return $ctr->{$method}($_method);
+        return $ctr->{$method}($_route->getMethod());
     }
 
 }

@@ -30,6 +30,11 @@ class Route
         $this->compiled = with(new SymfonyRoute($path))->compile();
     }
 
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
     public function getAction()
     {
         return $this->action;
